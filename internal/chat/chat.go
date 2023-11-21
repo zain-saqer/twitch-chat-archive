@@ -1,16 +1,17 @@
 package chat
 
 import (
+	"context"
 	"time"
 )
 
 type Message struct {
-	ID          string
-	Username    string
-	ChannelName string
-	Message     string
-	MessageType MessageType
-	Time        time.Time
+	ID          string      `json:"id"`
+	Username    string      `json:"username"`
+	ChannelName string      `json:"channelName"`
+	Message     string      `json:"message"`
+	MessageType MessageType `json:"messageType"`
+	Time        time.Time   `json:"time"`
 }
 
 type MessageType int
@@ -33,3 +34,7 @@ const (
 	ClearMsg        MessageType = iota
 	GlobalUserState MessageType = iota
 )
+
+type LogRepository interface {
+	SaveAll(ctx context.Context, messages []*Message) error
+}
