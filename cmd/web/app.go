@@ -1,25 +1,29 @@
 package main
 
 import (
+	"github.com/zain-saqer/twitch-chat-archive/internal/chat"
 	"os"
 )
 
+type App struct {
+	LogRepository chat.LogRepository
+	Config        Config
+}
+
 type Config struct {
-	MongoHost       string
-	MongoUsername   string
-	MongoPassword   string
-	MongoPort       string
-	MongoDatabase   string
-	MongoCollection string
+	ClickhouseDB   string
+	ClickhouseHost string
+	ClickhousePort string
+	ClickhouseUser string
+	ClickhousePass string
 }
 
 func getConfigs() *Config {
 	return &Config{
-		MongoHost:       os.Getenv(`MONGO_HOST`),
-		MongoUsername:   os.Getenv(`MONGO_USERNAME`),
-		MongoPassword:   os.Getenv(`MONGO_PASSWORD`),
-		MongoPort:       os.Getenv(`MONGO_PORT`),
-		MongoDatabase:   os.Getenv(`MONGO_DATABASE`),
-		MongoCollection: os.Getenv(`MONGO_COLLECTION`),
+		ClickhouseDB:   os.Getenv(`CLICKHOUSE_DB`),
+		ClickhouseHost: os.Getenv(`CLICKHOUSE_HOST`),
+		ClickhousePort: os.Getenv(`CLICKHOUSE_PORT`),
+		ClickhouseUser: os.Getenv(`CLICKHOUSE_USER`),
+		ClickhousePass: os.Getenv(`CLICKHOUSE_PASS`),
 	}
 }
