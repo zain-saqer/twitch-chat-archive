@@ -8,11 +8,8 @@ import (
 )
 
 func NewMessagePipeline(client *twitch.Client) chat.GetMessageStream {
-	return func(ctx context.Context, channels []string, messageTypes []chat.MessageType) (<-chan *chat.Message, error) {
+	return func(ctx context.Context, messageTypes []chat.MessageType) (<-chan *chat.Message, error) {
 		messageStream := make(chan *chat.Message)
-		for _, channel := range channels {
-			client.Join(channel)
-		}
 		clientDone := make(chan any)
 		go func() {
 			err := client.Connect()

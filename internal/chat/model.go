@@ -11,7 +11,12 @@ type Message struct {
 	ChannelName string      `json:"channelName"`
 	Message     string      `json:"message"`
 	MessageType MessageType `json:"messageType"`
-	Time        time.Time   `json:"time"`
+	Time        time.Time   `json:"timestamp"`
+}
+
+type Channel struct {
+	Name string    `json:"name"`
+	Time time.Time `json:"timestamp"`
 }
 
 type MessageType int
@@ -35,6 +40,7 @@ const (
 	GlobalUserState MessageType = iota
 )
 
-type LogRepository interface {
-	SaveAll(ctx context.Context, messages []*Message) error
+type Repository interface {
+	SaveMessage(ctx context.Context, message *Message) error
+	GetChannels(ctx context.Context) ([]*Channel, error)
 }

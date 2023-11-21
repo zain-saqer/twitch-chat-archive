@@ -1,29 +1,40 @@
 package main
 
 import (
+	"context"
+	"github.com/gempir/go-twitch-irc/v4"
 	"github.com/zain-saqer/twitch-chat-archive/internal/chat"
-	"os"
+	"github.com/zain-saqer/twitch-chat-archive/internal/irc"
 )
 
 type App struct {
-	LogRepository chat.LogRepository
-	Config        Config
+	ChatRepository chat.Repository
+	Config         *Config
+	TwitchClient   *twitch.Client
 }
 
-type Config struct {
-	ClickhouseDB   string
-	ClickhouseHost string
-	ClickhousePort string
-	ClickhouseUser string
-	ClickhousePass string
+func (a *App) JoinChannel(channel ...string) {
+	a.TwitchClient.Join(channel...)
 }
 
-func getConfigs() *Config {
-	return &Config{
-		ClickhouseDB:   os.Getenv(`CLICKHOUSE_DB`),
-		ClickhouseHost: os.Getenv(`CLICKHOUSE_HOST`),
-		ClickhousePort: os.Getenv(`CLICKHOUSE_PORT`),
-		ClickhouseUser: os.Getenv(`CLICKHOUSE_USER`),
-		ClickhousePass: os.Getenv(`CLICKHOUSE_PASS`),
+func (a *App) Depart(channel string) {
+	a.TwitchClient.Depart(channel)
+}
+
+func (a *App) StartMessagePipeline(ctx context.Context) error {
+	channels, err := a.ChatRepository.GetChannels(ctx)
+	if err != nil {
+		return err
 	}
+	for _, channel := range channels {
+		a.JoinChannel(channel.Name)
+	}
+	messageTypes := []chat.MessageType{chat.PrivMsg}
+	messageStream, err := irc.NewMessagePipeline(a.TwitchClient)(ctx, messageTypes)
+	if err != nil {
+		return err
+	}
+	filteredMessageStream := chat.FilterMessageStream(ctx, messageStream, messageTypes)
+	chat.SaveMessageStream(ctx, filteredMessageStream, a.ChatRepository)
+	return nil
 }
