@@ -1,0 +1,41 @@
+{{define `body`}}
+    <div class="container my-5">
+        <div class="col-lg-8 px-0">
+            {{template `channel_list` .}}
+        </div>
+    </div>
+{{end}}
+{{define `channel_list`}}
+    <h3>Channels</h3>
+    <div class="card">
+        <div class="card-body">
+            <a class="btn btn-secondary" href="/admin/channels/add">ADD</a>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Created at</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .}}
+            <tr>
+                <th scope="row">{{.Name}}</th>
+                <td>{{.Time.Format "2006.01.02 15:04"}}</td>
+                <td><button class="btn btn-text text-danger"
+                            hx-delete="/admin/channels/{{.ID}}"
+                            hx-confirm="Are you sure?"
+                            hx-trigger="click"
+                            hx-target="closest tr"
+                            hx-swap="outerHTML">delete</button></td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    {{if not .}}
+        <span class="text-muted text-center d-block">No channels</span>
+    {{end}}
+{{end}}

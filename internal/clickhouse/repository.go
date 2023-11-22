@@ -3,6 +3,7 @@ package clickhouse
 import (
 	"context"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
+	"github.com/google/uuid"
 	"github.com/zain-saqer/twitch-chat-archive/internal/chat"
 )
 
@@ -38,11 +39,12 @@ func (r ChatRepository) PrepareDatabase(ctx context.Context) error {
 	createChannelQuery := `
 	CREATE TABLE IF NOT EXISTS channel
 	(
-	   name      String,
-	   timestamp DateTime,
+	    id        UUID,
+	    name      String,
+	    timestamp DateTime,
 	)
 	ENGINE = MergeTree()
-	PRIMARY KEY (name, timestamp);
+	PRIMARY KEY (id);
 `
 	if err := r.conn.Exec(ctx, createChannelQuery); err != nil {
 		return err
@@ -73,4 +75,31 @@ func (r ChatRepository) GetChannels(ctx context.Context) ([]*chat.Channel, error
 	}
 
 	return channels, nil
+}
+
+func (r ChatRepository) GetChannel(ctx context.Context, uuid uuid.UUID) (*chat.Channel, error) {
+	row := r.conn.QueryRow(ctx, `SELECT * FROM channel WHERE id = ? ORDER BY id LIMIT 1`, uuid)
+	if row.Err() != nil {
+		return nil, row.Err()
+	}
+	channel := &chat.Channel{}
+	if err := row.ScanStruct(channel); err != nil {
+		return nil, err
+	}
+
+	return channel, nil
+}
+
+func (r ChatRepository) SaveChannel(ctx context.Context, channel *chat.Channel) error {
+	if err := r.conn.Exec(ctx, `INSERT INTO channel (id, name, timestamp) VALUES (?, ?, ?)`, channel.ID, channel.Name, channel.Time); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r ChatRepository) DeleteChannel(ctx context.Context, channel *chat.Channel) error {
+	if err := r.conn.Exec(ctx, `ALTER TABLE twitch_chat.channel DELETE WHERE id = ?`, channel.ID); err != nil {
+		return err
+	}
+	return nil
 }

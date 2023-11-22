@@ -1,16 +1,28 @@
-package main
+package chatlog
 
 import (
 	"context"
-	"github.com/gempir/go-twitch-irc/v4"
+	twitchirc "github.com/gempir/go-twitch-irc/v4"
 	"github.com/zain-saqer/twitch-chat-archive/internal/chat"
 	"github.com/zain-saqer/twitch-chat-archive/internal/irc"
 )
 
+type Config struct {
+	Debug          bool
+	AuthUser       string
+	AuthPass       string
+	ServerAddress  string
+	ClickhouseDB   string
+	ClickhouseHost string
+	ClickhousePort string
+	ClickhouseUser string
+	ClickhousePass string
+}
+
 type App struct {
 	ChatRepository chat.Repository
 	Config         *Config
-	TwitchClient   *twitch.Client
+	TwitchClient   *twitchirc.Client
 }
 
 func (a *App) JoinChannel(channel ...string) {

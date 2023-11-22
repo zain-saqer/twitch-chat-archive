@@ -2,6 +2,7 @@ package chat
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"time"
 )
 
@@ -15,8 +16,9 @@ type Message struct {
 }
 
 type Channel struct {
-	Name string    `json:"name"`
-	Time time.Time `json:"timestamp"`
+	ID   uuid.UUID `ch:"id"`
+	Name string    `ch:"name"`
+	Time time.Time `ch:"timestamp"`
 }
 
 type MessageType int
@@ -43,4 +45,7 @@ const (
 type Repository interface {
 	SaveMessage(ctx context.Context, message *Message) error
 	GetChannels(ctx context.Context) ([]*Channel, error)
+	GetChannel(ctx context.Context, uuid uuid.UUID) (*Channel, error)
+	SaveChannel(ctx context.Context, channel *Channel) error
+	DeleteChannel(ctx context.Context, channel *Channel) error
 }

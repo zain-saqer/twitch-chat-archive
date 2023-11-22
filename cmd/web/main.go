@@ -2,9 +2,13 @@ package main
 
 import (
 	"context"
+	"errors"
 	"github.com/gempir/go-twitch-irc/v4"
+	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
+	"github.com/zain-saqer/twitch-chat-archive/internal/chatlog"
 	"github.com/zain-saqer/twitch-chat-archive/internal/clickhouse"
+	"net/http"
 	"os"
 	"os/signal"
 	"sync"
@@ -25,7 +29,7 @@ func main() {
 	if err := chatRepository.PrepareDatabase(ctx); err != nil {
 		log.Fatal().Err(err).Stack().Msg(`error while preparing clickhouse database`)
 	}
-	app := &App{
+	app := &chatlog.App{
 		ChatRepository: chatRepository,
 		Config:         config,
 		TwitchClient:   twitchIrcClient,
@@ -33,11 +37,23 @@ func main() {
 	if err := app.StartMessagePipeline(ctx); err != nil {
 		log.Fatal().Err(err).Stack().Msg(`error starting the message pipeline`)
 	}
-	channels := []string{`Smoke`, `summit1g`, `tarik`, `kaicenat`, `jynxzi`, `caseoh_`, `maximum`, `mizkif`, `casimito`, `xQc`, `montanablack88`, `anomaly`, `soursweet`, `ohnepixel`, `psp1g`, `handongsuk`, `raderaderader`}
-	for _, channel := range channels {
-		app.TwitchClient.Join(channel)
-	}
+	e := echo.New()
+	e.Debug = config.Debug
+	server := NewServer(app, e)
+	server.middlewares()
+	server.setupRoutes()
+
 	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err := e.Start(config.ServerAddress)
+		if err != nil && !errors.Is(http.ErrServerClosed, err) {
+			log.Fatal().Err(err).Msg(`shutting down server error`)
+		}
+	}()
+
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -45,6 +61,9 @@ func main() {
 			select {
 			case <-ctx.Done():
 				log.Info().Msg(`shutting down...`)
+				if err := e.Shutdown(ctx); err != nil {
+					log.Error().Err(err).Msg(`error while shutting down the web server`)
+				}
 				return
 			}
 		}

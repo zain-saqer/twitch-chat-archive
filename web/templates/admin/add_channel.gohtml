@@ -1,0 +1,28 @@
+{{define `body`}}
+    <div class="container my-5">
+        <div class="col-lg-8 px-0">
+            {{template `channel_add` .}}
+        </div>
+    </div>
+{{end}}
+{{define `channel_add`}}
+    {{- /*gotype: main.AddChannel*/ -}}
+    <h3>Add a channel</h3>
+    {{if .Errors}}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <ul class="mb-0">
+                {{range .Errors}}
+                    <li>{{.}}</li>
+                {{end}}
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {{end}}
+    <form method="post">
+        <div class="mb-3">
+            <label for="nameInput" class="form-label">Name</label>
+            <input type="text" name="name" class="form-control" id="nameInput" value="{{.Name}}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">ADD</button>
+    </form>
+{{end}}
