@@ -8,7 +8,7 @@ import (
 )
 
 func NewMessagePipeline(client *twitch.Client) chat.GetMessageStream {
-	return func(ctx context.Context, messageTypes []chat.MessageType) (<-chan *chat.Message, error) {
+	return func(ctx context.Context, messageTypes []uint8) (<-chan *chat.Message, error) {
 		messageStream := make(chan *chat.Message)
 		clientDone := make(chan any)
 		go func() {
@@ -51,7 +51,7 @@ func NewMessagePipeline(client *twitch.Client) chat.GetMessageStream {
 	}
 }
 
-func mapToOurMessageType(messageType twitch.MessageType) chat.MessageType {
+func mapToOurMessageType(messageType twitch.MessageType) uint8 {
 	switch messageType {
 	case twitch.PRIVMSG:
 		return chat.PrivMsg

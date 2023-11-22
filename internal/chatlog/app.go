@@ -41,7 +41,7 @@ func (a *App) StartMessagePipeline(ctx context.Context) error {
 	for _, channel := range channels {
 		a.JoinChannel(channel.Name)
 	}
-	messageTypes := []chat.MessageType{chat.PrivMsg}
+	messageTypes := []uint8{chat.PrivMsg}
 	messageStream, err := irc.NewMessagePipeline(a.TwitchClient)(ctx, messageTypes)
 	if err != nil {
 		return err

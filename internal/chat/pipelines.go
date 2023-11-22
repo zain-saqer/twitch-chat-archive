@@ -6,9 +6,9 @@ import (
 	"slices"
 )
 
-type GetMessageStream func(ctx context.Context, messageTypes []MessageType) (<-chan *Message, error)
+type GetMessageStream func(ctx context.Context, messageTypes []uint8) (<-chan *Message, error)
 
-func FilterMessageStream(ctx context.Context, messageStream <-chan *Message, allowedTypes []MessageType) <-chan *Message {
+func FilterMessageStream(ctx context.Context, messageStream <-chan *Message, allowedTypes []uint8) <-chan *Message {
 	filteredMessageStream := make(chan *Message)
 
 	go func() {

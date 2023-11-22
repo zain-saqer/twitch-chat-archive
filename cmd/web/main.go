@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/gempir/go-twitch-irc/v4"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/zain-saqer/twitch-chat-archive/internal/chatlog"
 	"github.com/zain-saqer/twitch-chat-archive/internal/clickhouse"
@@ -17,6 +18,9 @@ import (
 
 func main() {
 	config := getConfigs()
+	if config.Debug {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	}
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	twitchIrcClient := twitch.NewAnonymousClient()

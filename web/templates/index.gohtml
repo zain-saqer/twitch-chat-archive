@@ -1,0 +1,48 @@
+{{define `body`}}
+    <div class="container my-5">
+        <div class="col-lg-8 px-0">
+            <div class="row">
+                <form class="row"
+                        hx-get="/chat-log"
+                        hx-target="#chat-log"
+                >
+                    <div class="col">
+                        <select name="channel" id="channelInput" class="form-select" aria-label="Channel">
+                            <option selected>Select channel</option>
+                            {{range .Channels}}
+                                <option value="{{.Name}}">{{.Name}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    <div class="col">
+                        <input type="text" name="username" class="form-control" placeholder="Username"
+                               aria-label="username">
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-secondary" type="submit">Search</button>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <div class="col pt-3">
+                    <ul id="chat-log">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}
+{{define `chat_log`}}
+    {{range .Messages}}
+        <li>{{.Time.Format "2006.01.02 15:04" }} {{.Username}}: {{.Message}}</li>
+    {{end}}
+    {{if eq (len .Messages) .Limit}}
+        <button type="button" class="btn btn-outline-dark mt-2"
+                hx-get="/chat-log?channel={{.Channel}}&username={{.Username}}&offset={{.Offset}}"
+                hx-trigger="click"
+                hx-swap="outerHTML"
+        >More
+        </button>
+    {{end}}
+{{end}}

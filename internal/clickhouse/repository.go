@@ -53,6 +53,23 @@ func (r ChatRepository) PrepareDatabase(ctx context.Context) error {
 	return nil
 }
 
+func (r ChatRepository) GetMessages(ctx context.Context, channel, username string, limit, offset int) ([]*chat.Message, error) {
+	messages := make([]*chat.Message, 0)
+	rows, err := r.conn.Query(ctx, `SELECT * FROM message WHERE (channel = ?) AND (username = ?) ORDER BY timestamp LIMIT ? OFFSET ?`, channel, username, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		message := &chat.Message{}
+		if err := rows.ScanStruct(message); err != nil {
+			return nil, err
+		}
+		messages = append(messages, message)
+	}
+
+	return messages, nil
+}
+
 func (r ChatRepository) SaveMessage(ctx context.Context, message *chat.Message) error {
 	if err := r.conn.AsyncInsert(ctx, `INSERT INTO message (id, channel, username, message, timestamp, message_type) VALUES (?, ?, ?, ?, ?, ?)`, false, message.ID, message.ChannelName, message.Username, message.Message, message.Time, message.MessageType); err != nil {
 		return err

@@ -7,12 +7,12 @@ import (
 )
 
 type Message struct {
-	ID          string      `json:"id"`
-	Username    string      `json:"username"`
-	ChannelName string      `json:"channelName"`
-	Message     string      `json:"message"`
-	MessageType MessageType `json:"messageType"`
-	Time        time.Time   `json:"timestamp"`
+	ID          string    `ch:"id"`
+	Username    string    `ch:"username"`
+	ChannelName string    `ch:"channel"`
+	Message     string    `ch:"message"`
+	MessageType uint8     `ch:"message_type"`
+	Time        time.Time `ch:"timestamp"`
 }
 
 type Channel struct {
@@ -21,29 +21,28 @@ type Channel struct {
 	Time time.Time `ch:"timestamp"`
 }
 
-type MessageType int
-
 const (
-	Unset           MessageType = iota
-	Whisper         MessageType = iota
-	PrivMsg         MessageType = iota
-	ClearChat       MessageType = iota
-	RoomState       MessageType = iota
-	UserNotice      MessageType = iota
-	UserState       MessageType = iota
-	Notice          MessageType = iota
-	Join            MessageType = iota
-	Part            MessageType = iota
-	Reconnect       MessageType = iota
-	Names           MessageType = iota
-	Ping            MessageType = iota
-	Pong            MessageType = iota
-	ClearMsg        MessageType = iota
-	GlobalUserState MessageType = iota
+	Unset           uint8 = iota
+	Whisper         uint8 = iota
+	PrivMsg         uint8 = iota
+	ClearChat       uint8 = iota
+	RoomState       uint8 = iota
+	UserNotice      uint8 = iota
+	UserState       uint8 = iota
+	Notice          uint8 = iota
+	Join            uint8 = iota
+	Part            uint8 = iota
+	Reconnect       uint8 = iota
+	Names           uint8 = iota
+	Ping            uint8 = iota
+	Pong            uint8 = iota
+	ClearMsg        uint8 = iota
+	GlobalUserState uint8 = iota
 )
 
 type Repository interface {
 	SaveMessage(ctx context.Context, message *Message) error
+	GetMessages(ctx context.Context, channel, username string, limit, offset int) ([]*Message, error)
 	GetChannels(ctx context.Context) ([]*Channel, error)
 	GetChannel(ctx context.Context, uuid uuid.UUID) (*Channel, error)
 	SaveChannel(ctx context.Context, channel *Channel) error
