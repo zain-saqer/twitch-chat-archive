@@ -5,14 +5,13 @@ export $(shell sed 's/=.*//' .env)
 test:
 	env
 build:
-	@docker build -t ${APP_IMAGE_TAG} -f ./docker/app/Dockerfile .
-	@docker image push ${APP_IMAGE_TAG}
+	@docker build -t ${APP_IMAGE} -f ./docker/app/Dockerfile .
 
 push-image:
-	@docker image push ${APP_IMAGE_TAG}
+	@docker image push ${APP_IMAGE}
 
 pull-image:
-	@docker image pull ${APP_IMAGE_TAG}
+	@docker image pull ${APP_IMAGE}
 
 stack-deploy:
 	@docker stack deploy --compose-file=docker-stack.yml twitch-chat-archive

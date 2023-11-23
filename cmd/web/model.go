@@ -24,8 +24,10 @@ type GetChatLogParam struct {
 	Offset   int    `query:"offset"`
 }
 
-func (p GetChatLogParam) Validate() bool {
-	return p.Offset >= 0
+func (p *GetChatLogParam) Validate() bool {
+	p.Channel = strings.TrimSpace(p.Channel)
+	p.Username = strings.TrimSpace(p.Username)
+	return !(p.Username == `` || p.Channel == `` || p.Offset < 0)
 }
 
 type AddChannel struct {

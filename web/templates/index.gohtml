@@ -7,8 +7,7 @@
                         hx-target="#chat-log"
                 >
                     <div class="col">
-                        <select name="channel" id="channelInput" class="form-select" aria-label="Channel">
-                            <option selected>Select channel</option>
+                        <select name="channel" id="channelInput" class="form-select" aria-label="Channel" required>
                             {{range .Channels}}
                                 <option value="{{.Name}}">{{.Name}}</option>
                             {{end}}
@@ -16,7 +15,7 @@
                     </div>
                     <div class="col">
                         <input type="text" name="username" class="form-control" placeholder="Username"
-                               aria-label="username">
+                               aria-label="username" required>
                     </div>
                     <div class="col">
                         <button class="btn btn-secondary" type="submit">Search</button>
