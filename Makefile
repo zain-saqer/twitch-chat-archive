@@ -13,10 +13,10 @@ push-image:
 pull-image:
 	@docker image pull ${APP_IMAGE}
 
-stack-deploy:
+up:
 	@docker stack deploy --compose-file=docker-stack.yml twitch-chat-archive
 
-stack-down:
+down:
 	@docker stack down twitch-chat-archive
 
 app-service-logs:

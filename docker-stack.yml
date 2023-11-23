@@ -5,7 +5,7 @@ services:
     depends_on:
       - clickhouse
     ports:
-      - "8080:8080"
+      - "${HOST_PORT:?}:${CONTAINER_PORT:?}"
     environment:
       SERVER_ADDRESS: ${SERVER_ADDRESS:?}
       AUTH_USER: ${AUTH_USER:?}
