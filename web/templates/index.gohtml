@@ -29,13 +29,26 @@
 
                     </ul>
                 </div>
+
+                <script>
+                    const logList = document.getElementById('chat-log')
+                    const config = { childList: true };
+                    const callback = () => {
+                        const spans = logList.querySelectorAll(`span`)
+                        for (const span of spans) {
+                            span.textContent = new Date(parseInt(span.dataset.time)).toLocaleString()
+                        }
+                    }
+                    const observer = new MutationObserver(callback);
+                    observer.observe(logList, config);
+                </script>
             </div>
         </div>
     </div>
 {{end}}
 {{define `chat_log`}}
     {{range .Messages}}
-        <li>{{.Time.Format "2006.01.02 15:04" }} {{.Username}}: {{.Message}}</li>
+        <li><span data-time="{{.Time.UnixMilli}}">{{.Time.Format "2006.01.02 15:04 GMT" }}</span> {{.Username}}: {{.Message}}</li>
     {{end}}
     {{if eq (len .Messages) .Limit}}
         <button type="button" class="btn btn-outline-dark mt-2"
