@@ -4,8 +4,8 @@ services:
     image: clickhouse/clickhouse-server:23.9
     environment:
       CLICKHOUSE_DB: ${CLICKHOUSE_DB:?}
-      CLICKHOUSE_USER: ${CLICKHOUSE_USER:?}
       CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:?}
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASS:?}
     cap_add:
       - NET_ADMIN

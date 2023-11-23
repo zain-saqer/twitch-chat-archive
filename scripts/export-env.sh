@@ -7,10 +7,10 @@
 uname_str=$(uname)
 if [ "$uname_str" = 'Linux' ]; then
 
-  export "$(grep -v '^#' .env | xargs -d '\n')"
+  export $(grep -v '^#' .env | xargs -d '\n')
 
 elif [ "$uname_str" = 'FreeBSD' ] || [ "$uname_str" = 'Darwin' ]; then
 
-  export "$(grep -v '^#' .env | xargs -0)"
+  export $(grep -v '^#' .env | xargs -0)
 
 fi
