@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/gempir/go-twitch-irc/v4"
+	"github.com/getsentry/sentry-go"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -18,6 +19,13 @@ import (
 
 func main() {
 	config := getConfigs()
+	if err := sentry.Init(sentry.ClientOptions{
+		Dsn:              config.SentryDsn,
+		TracesSampleRate: 1.0,
+	}); err != nil {
+		log.Fatal().Err(err).Msg("Sentry initialization failed")
+	}
+
 	if config.Debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}

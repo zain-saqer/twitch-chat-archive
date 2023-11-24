@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/subtle"
+	sentryecho "github.com/getsentry/sentry-go/echo"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog/log"
@@ -10,6 +11,7 @@ import (
 func (s *Server) middlewares() {
 	s.Echo.Use(middleware.Recover())
 	s.Echo.Use(loggerMiddleware())
+	s.Echo.Use(sentryecho.New(sentryecho.Options{Repanic: true, WaitForDelivery: true}))
 }
 
 func loggerMiddleware() echo.MiddlewareFunc {
