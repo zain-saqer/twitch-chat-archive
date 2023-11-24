@@ -23,12 +23,11 @@ func (r ChatRepository) PrepareDatabase(ctx context.Context) error {
 	createMessageQuery := `
 	CREATE TABLE IF NOT EXISTS message
 	(
-	   id           String,
 	   channel      LowCardinality(String),
-	   username     String,
-	   message      String,
-	   timestamp    DateTime,
-	   message_type UInt8
+	   username     String CODEC(ZSTD),
+	   message      String CODEC(ZSTD),
+	   timestamp    DateTime CODEC(ZSTD),
+	   message_type UInt8 CODEC(Delta, ZSTD)
 	)
 	ENGINE = MergeTree()
 	PRIMARY KEY (channel, username, timestamp);
@@ -41,7 +40,7 @@ func (r ChatRepository) PrepareDatabase(ctx context.Context) error {
 	(
 	    id        UUID,
 	    name      String,
-	    timestamp DateTime,
+	    timestamp DateTime
 	)
 	ENGINE = MergeTree()
 	PRIMARY KEY (id);
@@ -55,7 +54,7 @@ func (r ChatRepository) PrepareDatabase(ctx context.Context) error {
 
 func (r ChatRepository) GetMessages(ctx context.Context, channel, username string, limit, offset int) ([]*chat.Message, error) {
 	messages := make([]*chat.Message, 0)
-	rows, err := r.conn.Query(ctx, `SELECT * FROM message WHERE (channel = ?) AND (username = ?) ORDER BY timestamp LIMIT ? OFFSET ?`, channel, username, limit, offset)
+	rows, err := r.conn.Query(ctx, `SELECT channel, username, message, timestamp, message_type FROM message WHERE (channel = ?) AND (username = ?) ORDER BY timestamp LIMIT ? OFFSET ?`, channel, username, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +70,7 @@ func (r ChatRepository) GetMessages(ctx context.Context, channel, username strin
 }
 
 func (r ChatRepository) SaveMessage(ctx context.Context, message *chat.Message) error {
-	if err := r.conn.AsyncInsert(ctx, `INSERT INTO message (id, channel, username, message, timestamp, message_type) VALUES (?, ?, ?, ?, ?, ?)`, false, message.ID, message.ChannelName, message.Username, message.Message, message.Time, message.MessageType); err != nil {
+	if err := r.conn.AsyncInsert(ctx, `INSERT INTO message (channel, username, message, timestamp, message_type) VALUES (?, ?, ?, ?, ?)`, false, message.ChannelName, message.Username, message.Message, message.Time, message.MessageType); err != nil {
 		return err
 	}
 	return nil
@@ -115,7 +114,7 @@ func (r ChatRepository) SaveChannel(ctx context.Context, channel *chat.Channel) 
 }
 
 func (r ChatRepository) DeleteChannel(ctx context.Context, channel *chat.Channel) error {
-	if err := r.conn.Exec(ctx, `ALTER TABLE twitch_chat.channel DELETE WHERE id = ?`, channel.ID); err != nil {
+	if err := r.conn.Exec(ctx, `ALTER TABLE channel DELETE WHERE id = ?`, channel.ID); err != nil {
 		return err
 	}
 	return nil

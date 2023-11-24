@@ -24,7 +24,6 @@ func NewMessagePipeline(client *twitch.Client) chat.GetMessageStream {
 				return
 			default:
 				privateMessage := &chat.Message{
-					ID:          message.ID,
 					Username:    message.User.Name,
 					ChannelName: message.Channel,
 					Message:     message.Message,

@@ -7,7 +7,6 @@ import (
 )
 
 type Message struct {
-	ID          string    `ch:"id"`
 	Username    string    `ch:"username"`
 	ChannelName string    `ch:"channel"`
 	Message     string    `ch:"message"`
