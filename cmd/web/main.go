@@ -24,7 +24,6 @@ func main() {
 		Dsn:              config.SentryDsn,
 		TracesSampleRate: 1.0,
 	}); err != nil {
-		sentry.CaptureException(err)
 		log.Fatal().Err(err).Msg("Sentry initialization failed")
 	}
 	defer sentry.Flush(2 * time.Second)
