@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:clickhouse://localhost:18123/twitch_chat</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="twitch_chat@twitch-chat-logs.clickhouse" uuid="6e443a76-12e1-4071-a9a9-02eb2b9bfab0">
+      <driver-ref>clickhouse</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.clickhouse.jdbc.ClickHouseDriver</jdbc-driver>
+      <jdbc-url>jdbc:clickhouse://twitch-chat-logs.clickhouse:18123/twitch_chat</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
