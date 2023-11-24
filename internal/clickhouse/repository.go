@@ -26,7 +26,7 @@ func (r ChatRepository) PrepareDatabase(ctx context.Context) error {
 	   channel      LowCardinality(String),
 	   username     String CODEC(ZSTD),
 	   message      String CODEC(ZSTD),
-	   timestamp    DateTime CODEC(ZSTD),
+	   timestamp    DateTime CODEC(Delta, ZSTD),
 	   message_type UInt8 CODEC(Delta, ZSTD)
 	)
 	ENGINE = MergeTree()
