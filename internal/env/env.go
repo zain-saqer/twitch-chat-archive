@@ -2,6 +2,7 @@ package env
 
 import (
 	"errors"
+	"github.com/getsentry/sentry-go"
 	"github.com/rs/zerolog/log"
 	"os"
 )
@@ -19,6 +20,7 @@ func GetEnv(name string) (string, error) {
 func MustGetEnv(name string) string {
 	val, err := GetEnv(name)
 	if err != nil {
+		sentry.CaptureException(err)
 		log.Fatal().Err(err).Msgf(`error getting env var: %s`, name)
 	}
 	return val

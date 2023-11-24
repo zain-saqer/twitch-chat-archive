@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
+	"github.com/getsentry/sentry-go"
 	"github.com/rs/zerolog/log"
 )
 
@@ -33,6 +34,7 @@ func NewConnection(ctx context.Context, host, port, database, username, password
 		var exception *clickhouse.Exception
 		if errors.As(err, &exception) {
 			log.Error().Err(err).Msgf("exception [%d] %s \n%s\n", exception.Code, exception.Message, exception.StackTrace)
+			sentry.CaptureException(err)
 		}
 		return nil, err
 	}

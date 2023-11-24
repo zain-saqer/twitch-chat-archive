@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
@@ -31,6 +32,7 @@ func (s *Server) getIndex(c echo.Context) error {
 		var err error
 		t, err = template.ParseFS(web.F, `templates/layout.gohtml`, `templates/nav.gohtml`, `templates/index.gohtml`)
 		if err != nil {
+			sentry.CaptureException(err)
 			log.Fatal().Err(err).Stack().Msg(`error parsing templates`)
 		}
 	})()
@@ -48,6 +50,7 @@ func (s *Server) getChatLog(c echo.Context) error {
 		var err error
 		t, err = template.ParseFS(web.F, `templates/index.gohtml`)
 		if err != nil {
+			sentry.CaptureException(err)
 			log.Fatal().Err(err).Stack().Msg(`error parsing templates`)
 		}
 	})()
@@ -81,6 +84,7 @@ func (s *Server) getAdminChannels(c echo.Context) error {
 		var err error
 		t, err = template.ParseFS(web.F, `templates/layout.gohtml`, `templates/nav.gohtml`, `templates/admin/channels.gohtml`)
 		if err != nil {
+			sentry.CaptureException(err)
 			log.Fatal().Err(err).Stack().Msg(`error parsing templates`)
 		}
 	})()
@@ -97,6 +101,7 @@ func (s *Server) getAdminAddChannel(c echo.Context) error {
 		var err error
 		t, err = template.ParseFS(web.F, `templates/layout.gohtml`, `templates/nav.gohtml`, `templates/admin/add_channel.gohtml`)
 		if err != nil {
+			sentry.CaptureException(err)
 			log.Fatal().Err(err).Stack().Msg(`error parsing templates`)
 		}
 	})()
@@ -109,6 +114,7 @@ func (s *Server) postAdminAddChannel(c echo.Context) error {
 		var err error
 		t, err = template.ParseFS(web.F, `templates/layout.gohtml`, `templates/nav.gohtml`, `templates/admin/add_channel.gohtml`)
 		if err != nil {
+			sentry.CaptureException(err)
 			log.Fatal().Err(err).Stack().Msg(`error parsing templates`)
 		}
 	})()

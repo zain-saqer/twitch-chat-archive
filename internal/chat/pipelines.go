@@ -2,6 +2,7 @@ package chat
 
 import (
 	"context"
+	"github.com/getsentry/sentry-go"
 	"github.com/rs/zerolog/log"
 	"slices"
 )
@@ -40,6 +41,7 @@ func SaveMessageStream(ctx context.Context, messagesStream <-chan *Message, repo
 			case messages := <-messagesStream:
 				if err := repository.SaveMessage(ctx, messages); err != nil {
 					log.Error().Err(err).Msg(`error while saving a message`)
+					sentry.CaptureException(err)
 				}
 			}
 		}

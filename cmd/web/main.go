@@ -15,6 +15,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 )
 
 func main() {
@@ -23,8 +24,10 @@ func main() {
 		Dsn:              config.SentryDsn,
 		TracesSampleRate: 1.0,
 	}); err != nil {
+		sentry.CaptureException(err)
 		log.Fatal().Err(err).Msg("Sentry initialization failed")
 	}
+	defer sentry.Flush(2 * time.Second)
 
 	if config.Debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
@@ -35,10 +38,12 @@ func main() {
 
 	conn, err := clickhouse.NewConnection(ctx, config.ClickhouseHost, config.ClickhousePort, config.ClickhouseDB, config.ClickhouseUser, config.ClickhousePass)
 	if err != nil {
+		sentry.CaptureException(err)
 		log.Fatal().Err(err).Stack().Msg(`error creating clickhouse connection`)
 	}
 	chatRepository := clickhouse.NewRepository(conn, config.ClickhouseDB)
 	if err := chatRepository.PrepareDatabase(ctx); err != nil {
+		sentry.CaptureException(err)
 		log.Fatal().Err(err).Stack().Msg(`error while preparing clickhouse database`)
 	}
 	app := &chatlog.App{
@@ -46,6 +51,7 @@ func main() {
 		TwitchClient:   twitchIrcClient,
 	}
 	if err := app.StartMessagePipeline(ctx); err != nil {
+		sentry.CaptureException(err)
 		log.Fatal().Err(err).Stack().Msg(`error starting the message pipeline`)
 	}
 	e := echo.New()
@@ -61,6 +67,7 @@ func main() {
 		defer wg.Done()
 		err := e.Start(config.ServerAddress)
 		if err != nil && !errors.Is(http.ErrServerClosed, err) {
+			sentry.CaptureException(err)
 			log.Fatal().Err(err).Msg(`shutting down server error`)
 		}
 	}()
@@ -73,6 +80,7 @@ func main() {
 			case <-ctx.Done():
 				log.Info().Msg(`shutting down...`)
 				if err := e.Shutdown(ctx); err != nil {
+					sentry.CaptureException(err)
 					log.Error().Err(err).Msg(`error while shutting down the web server`)
 				}
 				return

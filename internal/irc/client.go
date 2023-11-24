@@ -3,6 +3,7 @@ package irc
 import (
 	"context"
 	"github.com/gempir/go-twitch-irc/v4"
+	"github.com/getsentry/sentry-go"
 	"github.com/rs/zerolog/log"
 	"github.com/zain-saqer/twitch-chat-archive/internal/chat"
 )
@@ -14,6 +15,7 @@ func NewMessagePipeline(client *twitch.Client) chat.GetMessageStream {
 		go func() {
 			err := client.Connect()
 			if err != nil {
+				sentry.CaptureException(err)
 				log.Err(err).Msg(`error while connect twitch irc client`)
 			}
 			clientDone <- struct{}{}
