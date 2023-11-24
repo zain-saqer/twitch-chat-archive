@@ -5,6 +5,7 @@ import (
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
 	"github.com/google/uuid"
 	"github.com/zain-saqer/twitch-chat-archive/internal/chat"
+	"strings"
 )
 
 func NewRepository(conn driver.Conn, database string) *ChatRepository {
@@ -54,7 +55,7 @@ func (r ChatRepository) PrepareDatabase(ctx context.Context) error {
 
 func (r ChatRepository) GetMessages(ctx context.Context, channel, username string, limit, offset int) ([]*chat.Message, error) {
 	messages := make([]*chat.Message, 0)
-	rows, err := r.conn.Query(ctx, `SELECT channel, username, message, timestamp, message_type FROM message WHERE (channel = ?) AND (username = ?) ORDER BY timestamp LIMIT ? OFFSET ?`, channel, username, limit, offset)
+	rows, err := r.conn.Query(ctx, `SELECT channel, username, message, timestamp, message_type FROM message WHERE (channel = ?) AND (username = ?) ORDER BY timestamp LIMIT ? OFFSET ?`, strings.ToLower(channel), strings.ToLower(username), limit, offset)
 	if err != nil {
 		return nil, err
 	}
