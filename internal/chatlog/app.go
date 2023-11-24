@@ -7,21 +7,8 @@ import (
 	"github.com/zain-saqer/twitch-chat-archive/internal/irc"
 )
 
-type Config struct {
-	Debug          bool
-	AuthUser       string
-	AuthPass       string
-	ServerAddress  string
-	ClickhouseDB   string
-	ClickhouseHost string
-	ClickhousePort string
-	ClickhouseUser string
-	ClickhousePass string
-}
-
 type App struct {
 	ChatRepository chat.Repository
-	Config         *Config
 	TwitchClient   *twitchirc.Client
 }
 

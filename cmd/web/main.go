@@ -35,7 +35,6 @@ func main() {
 	}
 	app := &chatlog.App{
 		ChatRepository: chatRepository,
-		Config:         config,
 		TwitchClient:   twitchIrcClient,
 	}
 	if err := app.StartMessagePipeline(ctx); err != nil {
@@ -43,7 +42,7 @@ func main() {
 	}
 	e := echo.New()
 	e.Debug = config.Debug
-	server := NewServer(app, e)
+	server := NewServer(app, e, config)
 	server.middlewares()
 	server.setupRoutes()
 

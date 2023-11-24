@@ -17,7 +17,7 @@ func (s *Server) setupRoutes() {
 	s.Echo.GET(`/`, s.getIndex)
 	s.Echo.GET(`/chat-log`, s.getChatLog)
 
-	adminGroup := s.Echo.Group(`/admin`, authMiddleware(s.App.Config))
+	adminGroup := s.Echo.Group(`/admin`, authMiddleware(s.Config))
 	adminGroup.GET(``, s.getAdminIndex)
 	adminGroup.GET(`/channels`, s.getAdminChannels)
 	adminGroup.GET(`/channels/add`, s.getAdminAddChannel)

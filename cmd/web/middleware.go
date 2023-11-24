@@ -5,7 +5,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog/log"
-	"github.com/zain-saqer/twitch-chat-archive/internal/chatlog"
 )
 
 func (s *Server) middlewares() {
@@ -34,7 +33,7 @@ func loggerMiddleware() echo.MiddlewareFunc {
 	})
 }
 
-func authMiddleware(config *chatlog.Config) echo.MiddlewareFunc {
+func authMiddleware(config *Config) echo.MiddlewareFunc {
 	return middleware.BasicAuth(func(username, password string, c echo.Context) (bool, error) {
 		if subtle.ConstantTimeCompare([]byte(username), []byte(config.AuthUser)) == 1 &&
 			subtle.ConstantTimeCompare([]byte(password), []byte(config.AuthPass)) == 1 {

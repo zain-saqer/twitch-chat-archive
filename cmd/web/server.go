@@ -6,10 +6,11 @@ import (
 )
 
 type Server struct {
-	App  *chatlog.App
-	Echo *echo.Echo
+	App    *chatlog.App
+	Echo   *echo.Echo
+	Config *Config
 }
 
-func NewServer(app *chatlog.App, e *echo.Echo) *Server {
-	return &Server{App: app, Echo: e}
+func NewServer(app *chatlog.App, e *echo.Echo, config *Config) *Server {
+	return &Server{App: app, Echo: e, Config: config}
 }

@@ -1,21 +1,35 @@
 package main
 
 import (
-	"github.com/zain-saqer/twitch-chat-archive/internal/chatlog"
+	"github.com/zain-saqer/twitch-chat-archive/internal/env"
 	"os"
 )
 
-func getConfigs() *chatlog.Config {
+type Config struct {
+	Debug          bool
+	AuthUser       string
+	AuthPass       string
+	ServerAddress  string
+	ClickhouseDB   string
+	ClickhouseHost string
+	ClickhousePort string
+	ClickhouseUser string
+	ClickhousePass string
+	SentryDsn      string
+}
+
+func getConfigs() *Config {
 	_, debug := os.LookupEnv(`DEBUG`)
-	return &chatlog.Config{
+	return &Config{
 		Debug:          debug,
-		ServerAddress:  os.Getenv(`SERVER_ADDRESS`),
-		ClickhouseDB:   os.Getenv(`CLICKHOUSE_DB`),
-		ClickhouseHost: os.Getenv(`CLICKHOUSE_HOST`),
-		ClickhousePort: os.Getenv(`CLICKHOUSE_PORT`),
-		ClickhouseUser: os.Getenv(`CLICKHOUSE_USER`),
-		ClickhousePass: os.Getenv(`CLICKHOUSE_PASS`),
-		AuthUser:       os.Getenv(`AUTH_USER`),
-		AuthPass:       os.Getenv(`AUTH_PASS`),
+		ServerAddress:  env.MustGetEnv(`SERVER_ADDRESS`),
+		ClickhouseDB:   env.MustGetEnv(`CLICKHOUSE_DB`),
+		ClickhouseHost: env.MustGetEnv(`CLICKHOUSE_HOST`),
+		ClickhousePort: env.MustGetEnv(`CLICKHOUSE_PORT`),
+		ClickhouseUser: env.MustGetEnv(`CLICKHOUSE_USER`),
+		ClickhousePass: env.MustGetEnv(`CLICKHOUSE_PASS`),
+		AuthUser:       env.MustGetEnv(`AUTH_USER`),
+		AuthPass:       env.MustGetEnv(`AUTH_PASS`),
+		SentryDsn:      env.MustGetEnv(`SENTRY_DSN`),
 	}
 }
