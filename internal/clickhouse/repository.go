@@ -25,10 +25,10 @@ func (r ChatRepository) PrepareDatabase(ctx context.Context) error {
 	CREATE TABLE IF NOT EXISTS message
 	(
 	   channel      LowCardinality(String),
-	   username     String CODEC(ZSTD),
-	   message      String CODEC(ZSTD),
-	   timestamp    DateTime CODEC(Delta, ZSTD),
-	   message_type UInt8 CODEC(Delta, ZSTD)
+	   username     String CODEC(LZ4),
+	   message      String CODEC(LZ4),
+	   timestamp    DateTime CODEC(Delta, LZ4),
+	   message_type UInt8 CODEC(Delta, LZ4)
 	)
 	ENGINE = MergeTree()
 	PRIMARY KEY (channel, username, timestamp);
